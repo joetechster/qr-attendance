@@ -6,7 +6,14 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { FormControl, InputAdornment, InputLabel, MenuItem, OutlinedInput } from "@mui/material";
+import {
+  FormControl,
+  InputAdornment,
+  InputLabel,
+  MenuItem,
+  OutlinedInput,
+  CircularProgress,
+} from "@mui/material";
 import { signInUser, User } from "utils/auth";
 import { useNavigate } from "react-router-dom";
 import { baseUrl } from "utils/globals";
@@ -19,6 +26,8 @@ export default function SignUp() {
   const [image, setImage] = React.useState<File | null>(null);
   const [imageDataUri, setImageDataUri] = React.useState<string | ArrayBuffer | null>("");
   const [imageError, setImageError] = React.useState<string | null>(null);
+  const [loading, setLoading] = React.useState(false);
+
   const navigate = useNavigate();
   const alert = useAlert();
 
@@ -46,6 +55,7 @@ export default function SignUp() {
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    setLoading(true);
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const res = await fetch(`${baseUrl}sign-up/`, {
@@ -71,6 +81,7 @@ export default function SignUp() {
         alert.error("Something went wrong");
       }
     }
+    setLoading(false);
   };
 
   return (
@@ -185,6 +196,8 @@ export default function SignUp() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2, color: "#fff" }}
+              disabled={loading} // Disable the button when loading
+              startIcon={loading ? <CircularProgress size={20} color="secondary" /> : null}
             >
               Sign Up
             </Button>

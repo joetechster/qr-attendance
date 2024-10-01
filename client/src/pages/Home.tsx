@@ -1,5 +1,13 @@
 import * as React from "react";
-import { Box, Button, Grid, PaletteMode, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Grid,
+  PaletteMode,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import getLPTheme from "../utils/getLPTheme";
 import Layout from "./Layout";
@@ -41,8 +49,11 @@ export default function LandingPage() {
 }
 
 const InstructorHome = () => {
+  const [loading, setLoading] = React.useState(false);
   const navigate = useNavigate();
+
   const startLecture = async (event: React.FormEvent<HTMLFormElement>) => {
+    setLoading(true);
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const res = await fetchAuth("lecture/", { method: "POST", body: data }, true);
@@ -52,6 +63,7 @@ const InstructorHome = () => {
     } else {
       console.log(await res.json());
     }
+    setLoading(false);
   };
 
   return (
@@ -75,7 +87,12 @@ const InstructorHome = () => {
     >
       <TextField required fullWidth name="name" label="Course Name" id="name" />
       <TextField required fullWidth name="code" label="Course Code" id="code" />
-      <Button variant="contained" type="submit">
+      <Button
+        variant="contained"
+        type="submit"
+        disabled={loading} // Disable the button when loading
+        startIcon={loading ? <CircularProgress size={20} color="secondary" /> : null}
+      >
         Start a new Lecture
       </Button>
     </Box>

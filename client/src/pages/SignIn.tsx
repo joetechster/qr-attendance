@@ -14,15 +14,17 @@ import { useNavigate } from "react-router-dom";
 import { baseUrl } from "utils/globals";
 import { useAlert } from "react-alert";
 import logo from "assets/logo.png";
-import { MenuItem } from "@mui/material";
+import { CircularProgress, MenuItem } from "@mui/material";
 import Layout from "./Layout";
 
 export default function SignIn() {
   const [type, setType] = React.useState("student");
+  const [loading, setLoading] = React.useState(false);
 
   const navigate = useNavigate();
   const alert = useAlert();
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    setLoading(true);
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const res = await fetch(`${baseUrl}sign-in/`, { method: "POST", body: data });
@@ -45,6 +47,7 @@ export default function SignIn() {
         alert.error("Something went wrong");
       }
     }
+    setLoading(false);
   };
 
   return (
@@ -104,6 +107,8 @@ export default function SignIn() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2, color: "#fff" }}
+              disabled={loading} // Disable the button when loading
+              startIcon={loading ? <CircularProgress size={20} color="secondary" /> : null}
             >
               Sign In
             </Button>
